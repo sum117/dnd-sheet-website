@@ -1,10 +1,10 @@
-import { Backpack, Footprints, Gem, Hand, HardHat, LucideIcon, Moon, Shirt, Sun } from "lucide-react";
+import { Backpack, Footprints, Gem, Hand, HardHat, Moon, Shirt, Sun } from "lucide-react";
 import { Fragment } from "react/jsx-runtime";
 import "./App.css";
 import { DndEquipmentItemGrid } from "./components/DndEquipmentItemGrid";
+import { ItemSlot } from "./components/ItemSlot";
 import { Button } from "./components/ui/button";
 import { useDarkTheme } from "./hooks/useDarkTheme";
-import { cn } from "./lib/utils";
 
 function App() {
   const { theme, toggleTheme } = useDarkTheme({ initialTheme: "dark" });
@@ -48,24 +48,5 @@ function App() {
     </Fragment>
   );
 }
-
-type ItemSlotProps = {
-  name: string;
-  description: string;
-  Icon: LucideIcon;
-  className?: string;
-};
-
-const ItemSlot = (itemSlot: ItemSlotProps) => (
-  <div
-    className={cn(
-      "group border-border border p-4 m-2 flex flex-col items-center justify-center gap-y-2 rounded-lg hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer",
-      itemSlot.className
-    )}
-  >
-    <itemSlot.Icon className="w-8 h-8" />
-    <p className="text-sm">{itemSlot.name}</p>
-  </div>
-);
 
 export default App;
