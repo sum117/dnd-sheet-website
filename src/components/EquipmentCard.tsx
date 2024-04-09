@@ -1,37 +1,15 @@
 import { Dot } from "@/components/Dot";
-import {
-  Anvil,
-  Backpack,
-  Coins,
-  Dices,
-  Droplet,
-  Hammer,
-  LucideIcon,
-  Shield,
-  Sword,
-  Target,
-  View,
-} from "lucide-react";
+import { Anvil, Backpack, Coins, Dices, Droplet, Hammer, LucideIcon, Shield, Sword, Target, View } from "lucide-react";
 import { Fragment } from "react";
 import { cn } from "../lib/utils";
 import { EquipmentType, EquipmentWeapon } from "../typings";
 import { Badge } from "./ui/badge";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 type EquipmentCardProps = React.ComponentProps<typeof Card> & {
   equipment: EquipmentType;
 };
-export function EquipmentCard({
-  className,
-  equipment,
-  ...props
-}: EquipmentCardProps) {
+export function EquipmentCard({ className, equipment, ...props }: EquipmentCardProps) {
   const iconMap: Record<string, LucideIcon> = {
     weapon: Sword,
     armor: Shield,
@@ -64,9 +42,7 @@ export function EquipmentCard({
           id: `${equipment.index}-range`,
           Icon: View,
           label: "Range",
-          value: weapon.range.long
-            ? [weapon.range.normal, weapon.range.long].join("/")
-            : weapon.range.normal,
+          value: weapon.range.long ? [weapon.range.normal, weapon.range.long].join("/") : weapon.range.normal,
           variant: "default" as const,
         },
         {
@@ -78,9 +54,7 @@ export function EquipmentCard({
         },
         {
           id: `${equipment.index}-type`,
-          Icon: weapon.damage?.damage_type?.index
-            ? iconMap[weapon.damage.damage_type.index]
-            : null,
+          Icon: weapon.damage?.damage_type?.index ? iconMap[weapon.damage.damage_type.index] : null,
           label: "Type",
           value: weapon.damage?.damage_type?.name,
           variant: "default" as const,
@@ -90,23 +64,21 @@ export function EquipmentCard({
     return [];
   };
 
-  const Icon = iconMap[equipment.equipment_category.index];
+  const Icon = iconMap[equipment.equipment_category.index] ?? iconMap.default;
+
   const badges = getBadges();
 
   return (
     <Card className={cn("", className)} {...props}>
       <CardHeader>
-        <CardTitle className="mb-4 flex gap-x-2 items-center">
+        <CardTitle className="mb-4 flex gap-x-2 items-center justify-between">
           <Icon />
           {equipment.name}
-          <Dot className="bg-gray-400" />
-          <p className="text-sm text-muted-foreground uppercase">
-            {equipment.equipment_category.name}
-          </p>
+          <p className="text-sm text-muted-foreground uppercase">{equipment.equipment_category.name}</p>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="inline-grid items-start space-x-2 grid-flow-col">
+        <div className="grid items-start space-x-2 grid-flow-col">
           {equipment.desc.length ? (
             <Fragment>
               <Dot />
@@ -114,9 +86,9 @@ export function EquipmentCard({
             </Fragment>
           ) : (
             equipment.equipment_category.index === "weapon" && (
-              <div className="flex gap-x-1 gap-y-2 flex-wrap">
+              <div className="grid grid-cols-[auto_auto] gap-y-2 justify-between">
                 {badges.map(({ id, Icon, value, variant }) => (
-                  <Badge key={id} variant={variant}>
+                  <Badge key={id} variant={variant} className="flex">
                     {Icon && <Icon className="w-4 h-4 mr-1" />}
                     <span className="text-xs">{value}</span>
                   </Badge>
@@ -126,7 +98,6 @@ export function EquipmentCard({
           )}
         </div>
       </CardContent>
-      <CardFooter></CardFooter>
     </Card>
   );
 }

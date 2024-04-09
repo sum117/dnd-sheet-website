@@ -7,12 +7,18 @@ export const EQUIPMENT_API_URL = `${API_BASE_URL}/api/equipment`;
 type UseDnDEquipmentsOptions = {
   sortBy?: "weapon" | "armor" | "adventuring-gear";
   removeToolsAndMounts: boolean;
+  removeEmptyDescriptionAdveturingGear: boolean;
 };
 
 export function useDnDEquipments(
-  { sortBy, removeToolsAndMounts }: UseDnDEquipmentsOptions = {
+  {
+    sortBy,
+    removeToolsAndMounts,
+    removeEmptyDescriptionAdveturingGear,
+  }: UseDnDEquipmentsOptions = {
     sortBy: "weapon",
     removeToolsAndMounts: false,
+    removeEmptyDescriptionAdveturingGear: false,
   }
 ) {
   const noToolsAndMounts = useMemo(
@@ -29,8 +35,8 @@ export function useDnDEquipments(
       (a: EquipmentType, b: EquipmentType): number => {
         const categoryOrder: Record<string, number> = {
           weapon: sortBy === "weapon" ? 0 : 1,
-          armor: sortBy === "armor" ? 0 : 1,
-          "adventuring-gear": sortBy === "adventuring-gear" ? 0 : 1,
+          armor: sortBy === "armor" ? 0 : 2,
+          "adventuring-gear": sortBy === "adventuring-gear" ? 0 : 3,
         };
         const categoryA = categoryOrder[a.equipment_category.index];
         const categoryB = categoryOrder[b.equipment_category.index];
@@ -68,17 +74,23 @@ export function useDnDEquipments(
           }
         );
         const results = await Promise.all(equipmentPromises);
-        const successfulEquipments = results.filter(
+        let successfulEquipments = results.filter(
           (equipment) => !equipment.error
         ) as EquipmentType[];
-
-        if (removeToolsAndMounts) {
-          setEquipments(
-            successfulEquipments.filter(noToolsAndMounts).sort(sortEquipments)
+        if (removeEmptyDescriptionAdveturingGear) {
+          successfulEquipments = successfulEquipments.filter(
+            (equipment) =>
+              !(
+                equipment.equipment_category.index === "adventuring-gear" &&
+                !equipment.desc.length
+              )
           );
-        } else {
-          setEquipments(successfulEquipments.sort(sortEquipments));
         }
+        if (removeToolsAndMounts) {
+          successfulEquipments = successfulEquipments.filter(noToolsAndMounts);
+        }
+
+        setEquipments(successfulEquipments.sort(sortEquipments));
         setLoading(false);
       } catch (error) {
         if (error instanceof Error) {
