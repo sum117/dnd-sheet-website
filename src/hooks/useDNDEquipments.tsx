@@ -11,11 +11,7 @@ type UseDnDEquipmentsOptions = {
 };
 
 export function useDnDEquipments(
-  {
-    sortBy,
-    removeToolsAndMounts,
-    removeEmptyDescriptionAdveturingGear,
-  }: UseDnDEquipmentsOptions = {
+  { sortBy, removeToolsAndMounts, removeEmptyDescriptionAdveturingGear }: UseDnDEquipmentsOptions = {
     sortBy: "weapon",
     removeToolsAndMounts: false,
     removeEmptyDescriptionAdveturingGear: false,
@@ -24,9 +20,7 @@ export function useDnDEquipments(
   const noToolsAndMounts = useMemo(
     () =>
       (equipment: EquipmentType): boolean =>
-        ["weapon", "armor", "adventuring-gear"].includes(
-          equipment.equipment_category.index
-        ),
+        ["weapon", "armor", "adventuring-gear"].includes(equipment.equipment_category.index),
     []
   );
 
@@ -60,30 +54,19 @@ export function useDnDEquipments(
       try {
         const response = await fetch(EQUIPMENT_API_URL, { signal });
         const data = await response.json();
-        const equipmentPromises = data.results.map(
-          async (equipmentReference: Reference) => {
-            try {
-              const equipmentResponse = await fetch(
-                `${API_BASE_URL}${equipmentReference.url}`,
-                { signal }
-              );
-              return await equipmentResponse.json();
-            } catch (error) {
-              return { error };
-            }
+        const equipmentPromises = data.results.map(async (equipmentReference: Reference) => {
+          try {
+            const equipmentResponse = await fetch(`${API_BASE_URL}${equipmentReference.url}`, { signal });
+            return await equipmentResponse.json();
+          } catch (error) {
+            return { error };
           }
-        );
+        });
         const results = await Promise.all(equipmentPromises);
-        let successfulEquipments = results.filter(
-          (equipment) => !equipment.error
-        ) as EquipmentType[];
+        let successfulEquipments = results.filter((equipment) => !equipment.error) as EquipmentType[];
         if (removeEmptyDescriptionAdveturingGear) {
           successfulEquipments = successfulEquipments.filter(
-            (equipment) =>
-              !(
-                equipment.equipment_category.index === "adventuring-gear" &&
-                !equipment.desc.length
-              )
+            (equipment) => !(equipment.equipment_category.index === "adventuring-gear" && !equipment.desc.length)
           );
         }
         if (removeToolsAndMounts) {
@@ -110,5 +93,5 @@ export function useDnDEquipments(
     };
   }, [noToolsAndMounts, sortEquipments, sortBy, removeToolsAndMounts]);
 
-  return { equipments, error, loading };
+  return { equipments, error, loading, setEquipments };
 }

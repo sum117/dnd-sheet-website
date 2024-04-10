@@ -1,4 +1,5 @@
 import { Dot } from "@/components/Dot";
+import { useDraggable } from "@dnd-kit/core";
 import { Anvil, Backpack, Coins, Dices, Droplet, Hammer, LucideIcon, Shield, Sword, Target, View } from "lucide-react";
 import { Fragment } from "react";
 import { cn } from "../lib/utils";
@@ -68,8 +69,19 @@ export function EquipmentCard({ className, equipment, ...props }: EquipmentCardP
 
   const badges = getBadges();
 
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: equipment.index,
+    data: equipment,
+  });
+
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+      }
+    : undefined;
+
   return (
-    <Card className={cn("", className)} {...props}>
+    <Card className={cn("", className)} ref={setNodeRef} style={style} {...listeners} {...attributes} {...props}>
       <CardHeader>
         <CardTitle className="mb-4 flex gap-x-2 items-center justify-between">
           <Icon />
