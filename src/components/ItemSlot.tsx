@@ -1,6 +1,6 @@
+import { cn } from "@/lib/utils";
 import { useDroppable } from "@dnd-kit/core";
 import { LucideIcon } from "lucide-react";
-import { cn } from "../lib/utils";
 
 export type ItemSlotProps = {
   id: string;
@@ -16,16 +16,17 @@ export function ItemSlot(itemSlot: ItemSlotProps) {
   return (
     <div
       className={cn(
-        "group border-border border p-4 m-2 flex flex-col items-center justify-center gap-y-2 rounded-lg hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer",
+        "group border-border border m-2 flex flex-col items-center justify-center gap-y-2 rounded-lg hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer w-24 h-24",
         {
           "border-green-500": isOver,
+          "p-4": !itemSlot.children,
         },
-        itemSlot.className
+        itemSlot.className,
       )}
       ref={setNodeRef}
     >
-      <itemSlot.Icon className="w-8 h-8" />
-      <p className="text-sm">{itemSlot.name}</p>
+      {!itemSlot.children && <itemSlot.Icon />}
+      {!itemSlot.children && <p className="text-xs">{itemSlot.name}</p>}
       {itemSlot.children}
     </div>
   );

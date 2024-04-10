@@ -1,26 +1,24 @@
-import { Dot } from "@/components/Dot";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { cn, toTitleCase } from "@/lib/utils";
+import { EquipmentType, EquipmentWeapon } from "@/typings";
 import { useDraggable } from "@dnd-kit/core";
 import { Anvil, Backpack, Coins, Dices, Droplet, Hammer, LucideIcon, Shield, Sword, Target, View } from "lucide-react";
-import { Fragment } from "react";
-import { cn } from "../lib/utils";
-import { EquipmentType, EquipmentWeapon } from "../typings";
-import { Badge } from "./ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 type EquipmentCardProps = React.ComponentProps<typeof Card> & {
   equipment: EquipmentType;
 };
-export function EquipmentCard({ className, equipment, ...props }: EquipmentCardProps) {
-  const iconMap: Record<string, LucideIcon> = {
-    weapon: Sword,
-    armor: Shield,
-    "adventuring-gear": Backpack,
-    slashing: Droplet,
-    piercing: Target,
-    bludgeoning: Hammer,
-    default: View,
-  };
+const iconMap: Record<string, LucideIcon> = {
+  weapon: Sword,
+  armor: Shield,
+  "adventuring-gear": Backpack,
+  slashing: Droplet,
+  piercing: Target,
+  bludgeoning: Hammer,
+  default: View,
+};
 
+export function EquipmentCard({ className, equipment, ...props }: EquipmentCardProps) {
   const getBadges = () => {
     if (equipment.equipment_category.index === "weapon") {
       const weapon = equipment as EquipmentWeapon;
@@ -36,7 +34,7 @@ export function EquipmentCard({ className, equipment, ...props }: EquipmentCardP
           id: `${equipment.index}-cost`,
           Icon: Coins,
           label: "Cost",
-          variant: "secondary" as const,
+          variant: "gold" as const,
           value: `${equipment.cost.quantity} ${equipment.cost.unit}`,
         },
         {
@@ -66,9 +64,6 @@ export function EquipmentCard({ className, equipment, ...props }: EquipmentCardP
   };
 
   const Icon = iconMap[equipment.equipment_category.index] ?? iconMap.default;
-
-  const badges = getBadges();
-
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: equipment.index,
     data: equipment,
@@ -79,37 +74,71 @@ export function EquipmentCard({ className, equipment, ...props }: EquipmentCardP
         transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
       }
     : undefined;
+  const badges = getBadges();
 
   return (
-    <Card className={cn("", className)} ref={setNodeRef} style={style} {...listeners} {...attributes} {...props}>
-      <CardHeader>
-        <CardTitle className="mb-4 flex gap-x-2 items-center justify-between">
-          <Icon />
-          {equipment.name}
-          <p className="text-sm text-muted-foreground uppercase">{equipment.equipment_category.name}</p>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid items-start space-x-2 grid-flow-col">
-          {equipment.desc.length ? (
-            <Fragment>
-              <Dot />
-              <p>{equipment.desc.at(0)}</p>
-            </Fragment>
-          ) : (
-            equipment.equipment_category.index === "weapon" && (
-              <div className="grid grid-cols-[auto_auto] gap-y-2 justify-between">
-                {badges.map(({ id, Icon, value, variant }) => (
-                  <Badge key={id} variant={variant} className="flex">
-                    {Icon && <Icon className="w-4 h-4 mr-1" />}
-                    <span className="text-xs">{value}</span>
-                  </Badge>
-                ))}
-              </div>
-            )
-          )}
-        </div>
-      </CardContent>
-    </Card>
+    <div
+      className={cn("border-border p-2 rounded-lg border bg-primary-foreground h-48 flex flex-col cursor-move", className)}
+      {...attributes}
+      {...listeners}
+      ref={setNodeRef}
+      style={style}
+      {...props}
+    >
+      <div className="flex items-center justify-between">
+        <p className="text-lg font-semibold">{parseEquipmentName(equipment.name)}</p>
+        <Icon className="w-8 h-8" />
+      </div>
+      <div className="grid grid-cols-2 gap-y-2 gap-x-2 my-auto">
+        {badges
+          .filter((badge) => Boolean(badge.value))
+          .map((badge) => (
+            <Badge key={badge.id} variant={badge.variant} className="flex items-center gap-x-2">
+              {badge.Icon && <badge.Icon className="w-4 h-4" />}
+              <span className="font-semibold">{badge.value}</span>
+            </Badge>
+          ))}
+      </div>
+    </div>
   );
+}
+export function EquipmentChip({ className, equipment, ...props }: EquipmentCardProps) {
+  const Icon = iconMap[equipment.equipment_category.index] ?? iconMap.default;
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: equipment.index,
+    data: equipment,
+  });
+
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+      }
+    : undefined;
+  return (
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      className={cn(
+        "flex flex-col gap-y-2 bg-primary-foreground items-center  justify-center text-center rounded-lg hover:bg-primary hover:text-primary-foreground w-24 h-24",
+        className,
+      )}
+      style={style}
+      {...props}
+    >
+      <Icon />
+      {equipment.name}
+    </div>
+  );
+}
+
+export function parseEquipmentName(name: string) {
+  const splitWords = name.split(" ");
+  for (let i = 0; i < splitWords.length; i++) {
+    const hasNumber = /\d/.test(splitWords[i]);
+    if (!hasNumber) {
+      splitWords[i] = toTitleCase(splitWords[i].replace(",", " |"));
+    }
+  }
+  return splitWords.join(" ");
 }

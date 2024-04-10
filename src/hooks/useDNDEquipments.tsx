@@ -1,5 +1,5 @@
+import { EquipmentType, Reference } from "@/typings";
 import { useEffect, useMemo, useState } from "react";
-import { EquipmentType, Reference } from "../typings";
 
 export const API_BASE_URL = "https://www.dnd5eapi.co";
 export const EQUIPMENT_API_URL = `${API_BASE_URL}/api/equipment`;
@@ -7,21 +7,21 @@ export const EQUIPMENT_API_URL = `${API_BASE_URL}/api/equipment`;
 type UseDnDEquipmentsOptions = {
   sortBy?: "weapon" | "armor" | "adventuring-gear";
   removeToolsAndMounts: boolean;
-  removeEmptyDescriptionAdveturingGear: boolean;
+  removeEmptyDescriptionAdventuringGear: boolean;
 };
 
 export function useDnDEquipments(
-  { sortBy, removeToolsAndMounts, removeEmptyDescriptionAdveturingGear }: UseDnDEquipmentsOptions = {
+  { sortBy, removeToolsAndMounts, removeEmptyDescriptionAdventuringGear }: UseDnDEquipmentsOptions = {
     sortBy: "weapon",
     removeToolsAndMounts: false,
-    removeEmptyDescriptionAdveturingGear: false,
-  }
+    removeEmptyDescriptionAdventuringGear: false,
+  },
 ) {
   const noToolsAndMounts = useMemo(
     () =>
       (equipment: EquipmentType): boolean =>
         ["weapon", "armor", "adventuring-gear"].includes(equipment.equipment_category.index),
-    []
+    [],
   );
 
   const sortEquipments = useMemo(
@@ -38,7 +38,7 @@ export function useDnDEquipments(
         if (categoryA !== categoryB) return categoryA - categoryB;
         return a.name.localeCompare(b.name);
       },
-    [sortBy]
+    [sortBy],
   );
 
   const [equipments, setEquipments] = useState<Array<EquipmentType>>([]);
@@ -64,9 +64,9 @@ export function useDnDEquipments(
         });
         const results = await Promise.all(equipmentPromises);
         let successfulEquipments = results.filter((equipment) => !equipment.error) as EquipmentType[];
-        if (removeEmptyDescriptionAdveturingGear) {
+        if (removeEmptyDescriptionAdventuringGear) {
           successfulEquipments = successfulEquipments.filter(
-            (equipment) => !(equipment.equipment_category.index === "adventuring-gear" && !equipment.desc.length)
+            (equipment) => !(equipment.equipment_category.index === "adventuring-gear" && !equipment.desc.length),
           );
         }
         if (removeToolsAndMounts) {

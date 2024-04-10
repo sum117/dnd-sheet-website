@@ -74,4 +74,13 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .w-full-everything {
+    *>* {
+      @apply w-full;
+    }
+
+    @apply w-full;
+  }
+
 }
