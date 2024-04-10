@@ -55,13 +55,14 @@ function App() {
     if (!event.over && oldSlot && oldEquipment) {
       setEquipmentSlots((prev) => ({ ...prev, [oldSlot]: null }));
       setDndEquipments((prev) => [...prev, oldEquipment]);
-    } else if (event.over && oldSlot && oldEquipment) {
+    } else if (event.over) {
       const newSlot = event.over.id;
-      setEquipmentSlots((prev) => ({ ...prev, [oldSlot]: null, [newSlot]: oldEquipment }));
-    } else if (event.over && !oldSlot) {
-      const newSlot = event.over.id;
-      setEquipmentSlots((prev) => ({ ...prev, [newSlot]: equipmentBeingDragged }));
-      setDndEquipments((prev) => prev.filter((equipment) => equipment.index !== equipmentBeingDragged.index));
+      if (oldSlot && oldEquipment) {
+        setEquipmentSlots((prev) => ({ ...prev, [oldSlot]: null, [newSlot]: oldEquipment }));
+      } else if (!oldSlot) {
+        setEquipmentSlots((prev) => ({ ...prev, [newSlot]: equipmentBeingDragged }));
+        setDndEquipments((prev) => prev.filter((equipment) => equipment.index !== equipmentBeingDragged.index));
+      }
     } else if (!event.over) {
       setDndEquipments((prev) => [...prev, equipmentBeingDragged]);
     } else {

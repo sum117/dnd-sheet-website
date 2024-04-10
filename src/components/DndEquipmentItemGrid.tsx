@@ -4,12 +4,9 @@ import { EquipmentCard } from "./EquipmentCard";
 import { Spinner } from "./ui/spinner";
 
 export interface DndEquipmentItemGridProps extends React.HTMLAttributes<HTMLDivElement> {
-  sortBy?: "weapon" | "armor" | "adventuring-gear";
-  removeToolsAndMounts?: boolean;
   dndEquipmentError?: string;
   dndEquipments: EquipmentType[];
   loadingDndItems: boolean;
-  removeEmptyDescriptionAdveturingGear?: boolean;
   className?: string;
 }
 export function DndEquipmentItemGrid({ className, dndEquipmentError, dndEquipments, loadingDndItems }: DndEquipmentItemGridProps) {
