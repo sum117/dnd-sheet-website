@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
 
-export function useDarkTheme({
-  initialTheme,
-}: {
-  initialTheme: "light" | "dark";
-}) {
-  const [theme, setTheme] = useState<"light" | "dark">(
-    (localStorage.getItem("theme") as "light" | "dark") || initialTheme
-  );
+export function useDarkTheme({ initialTheme }: { initialTheme: "light" | "dark" }) {
+  const [theme, setTheme] = useState<"light" | "dark">((localStorage.getItem("theme") as "light" | "dark") || initialTheme);
 
   const toggleTheme = () => {
     localStorage.setItem("theme", theme === "light" ? "dark" : "light");
