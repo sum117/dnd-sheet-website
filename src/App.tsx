@@ -8,7 +8,7 @@ import { GET_WEAPONS_WITH_METADATA } from "./api";
 import { WeaponCard } from "./components/WeaponCard";
 
 function App() {
-  const { loading, data } = useQuery(GET_WEAPONS_WITH_METADATA, {
+  const { loading, data: { equipments } = {} } = useQuery(GET_WEAPONS_WITH_METADATA, {
     variables: { equipmentCategory: "weapon" },
   });
 
@@ -31,7 +31,11 @@ function App() {
               {itemSlots.slice(0, 2).map((slot) => (
                 <ItemSlot {...slot} />
               ))}
-              {!loading && <WeaponCard weapon={data?.equipments?.at(0) as Weapon} />}
+              {equipments
+                ?.filter((equipment): equipment is Weapon => {
+                  return equipment.__typename === "Weapon";
+                })
+                .map((weapon) => <WeaponCard className=" animate-in fade-in-0" key={weapon.index} weapon={weapon} />)}
             </div>
           </section>
         </div>

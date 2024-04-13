@@ -10,7 +10,7 @@ export function StatChip({ type, value, Icon }: StatChipProps) {
     <div className="flex flex-col bg-secondary px-2 pb-0.5 pt-1">
       <span className="text-end uppercase text-foreground/60">{type}</span>
       <div className="flex items-center gap-x-1 self-end">
-        <span className="uppercase">{value}</span>
+        <span>{value}</span>
         <Icon className="h-5 w-5" />
       </div>
     </div>
