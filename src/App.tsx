@@ -21,9 +21,7 @@ function App() {
             src="https://i.pinimg.com/originals/79/c3/de/79c3dec7541874812a123e3d7a9fcc24.jpg"
             alt="Character"
           />
-          <figcaption>
-            <h2 className="sr-only">Character Image</h2>
-          </figcaption>
+          <figcaption className="sr-only">Character Image</figcaption>
         </figure>
         <div className="flex flex-1 flex-col">
           <Header />
