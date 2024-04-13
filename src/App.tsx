@@ -1,9 +1,17 @@
 import { Header } from "@/components/Header";
 import ItemSlot from "@/components/ItemSlot";
 import { itemSlots } from "@/data";
+import { useQuery } from "@apollo/client";
 import { Fragment } from "react";
+import { Weapon } from "./__generated__/graphql";
+import { GET_WEAPONS_WITH_METADATA } from "./api";
+import { WeaponCard } from "./components/WeaponCard";
 
 function App() {
+  const { loading, data } = useQuery(GET_WEAPONS_WITH_METADATA, {
+    variables: { equipmentCategory: "weapon" },
+  });
+
   return (
     <Fragment>
       <main className="flex">
@@ -17,14 +25,15 @@ function App() {
             <h2 className="sr-only">Character Image</h2>
           </figcaption>
         </figure>
-        <div className="flex w-full flex-col">
+        <div className="flex flex-1 flex-col">
           <Header />
           <section className="px-16 py-8">
             <h2 className="pb-8 text-2xl tracking-widest">Currently Equipped</h2>
-            <div className="grid max-w-2xl grid-cols-2 gap-5">
+            <div className="grid max-w-[43.875rem] grid-cols-2 gap-5">
               {itemSlots.slice(0, 2).map((slot) => (
                 <ItemSlot {...slot} />
               ))}
+              {!loading && <WeaponCard weapon={data?.equipments?.at(0) as Weapon} />}
             </div>
           </section>
         </div>
